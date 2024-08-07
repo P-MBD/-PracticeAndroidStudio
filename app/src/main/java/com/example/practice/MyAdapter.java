@@ -1,15 +1,10 @@
-
 package com.example.practice;
+
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.practice.Item;
-import com.example.practice.R;
-
+import com.example.practice.databinding.ItemLayoutBinding;
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
@@ -22,15 +17,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
-        return new ViewHolder(view);
+        ItemLayoutBinding binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item item = itemList.get(position);
-        holder.titleTextView.setText(item.getTitle());
-        holder.descriptionTextView.setText(item.getDescription());
+        holder.binding.title.setText(item.getTitle());
+        holder.binding.description.setText(item.getDescription());
     }
 
     @Override
@@ -39,13 +34,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView titleTextView;
-        public TextView descriptionTextView;
+        private final ItemLayoutBinding binding;
 
-        public ViewHolder(View view) {
-            super(view);
-            titleTextView = view.findViewById(R.id.title);
-            descriptionTextView = view.findViewById(R.id.description);
+        public ViewHolder(ItemLayoutBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

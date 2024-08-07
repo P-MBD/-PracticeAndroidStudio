@@ -4,22 +4,21 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.practice.databinding.ActivityMainBinding;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
+    private ActivityMainBinding binding;
     private MyAdapter adapter;
     private List<Item> itemList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         itemList = new ArrayList<>();
         itemList.add(new Item("Title 1", "Description 1"));
@@ -27,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         // افزودن آیتم‌های بیشتر به لیست
 
         adapter = new MyAdapter(itemList);
-        recyclerView.setAdapter(adapter);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerView.setAdapter(adapter);
     }
 }

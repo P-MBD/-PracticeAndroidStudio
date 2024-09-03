@@ -1,11 +1,15 @@
 package com.example.practice.model;
 
 public interface LoginInteractor {
+
+
     interface OnLoginFinishedListener {
-        void onUsernameError();
-        void onPasswordError();
-        void onSuccess();
+        public  void onUsernameError();
+        public  void onPasswordError();
+        public  void onSuccess();
     }
 
-    void login(String username, String password, OnLoginFinishedListener listener);
+
+    public void login(String userName,String password,OnLoginFinishedListener onLoginFinishedListener);
+
 }

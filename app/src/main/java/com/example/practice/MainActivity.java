@@ -1,77 +1,62 @@
 package com.example.practice;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
+import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.databinding.DataBindingUtil;
+import com.example.practice.databinding.ActivityMainBinding;
 
-import com.example.practice.model.ModelCallBack;
-import com.example.practice.presentor.MainPresenterImpl;
-import com.example.practice.presentor.MainPresentor;
+public class MainActivity extends AppCompatActivity {
 
-public class MainActivity extends AppCompatActivity implements LoginView {
-EditText username, password;
-ProgressBar progress;
-Button button;
-MainPresentor mainPresentor;
+    private static final String TAG = "MainActivity"; // برای فیلتر کردن لاگ‌ها
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        username = (EditText) findViewById(R.id.password);
-        password = (EditText) findViewById(R.id.username);
-        progress = (ProgressBar) findViewById(R.id.progress);
-        button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                mainPresentor.login(username.getText().toString(),password.getText().toString());
+        // تنظیم Data Binding
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-            }
+        // ساخت یک User نمونه و اتصال آن به layout
+        User user = new User("John", "Doe");
+        binding.setUser(user);
+
+        // ثبت یک پیام لاگ در زمان ایجاد Activity
+        Log.d(TAG, "Activity Created. User's first name: " + user.firstName);
+
+        // ثبت یک پیام لاگ در هنگام کلیک روی یک دکمه (در صورت وجود)
+        binding.someButton.setOnClickListener(v -> {
+            Log.d(TAG, "Button clicked. Current User's last name: " + user.lastName);
         });
-        mainPresentor = new MainPresenterImpl(this, new ModelCallBack());
-
-        // اطمینان از اینکه ID درست استفاده شده است
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_layout), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
     }
 
     @Override
-    public void showProgress() {
-        progress.setVisibility(View.VISIBLE);
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "Activity Started");
     }
 
     @Override
-    public void hideProgress() {
-        progress.setVisibility(View.GONE);
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "Activity Resumed");
     }
 
     @Override
-    public void setUsernameError() {
-        Toast.makeText(getApplicationContext(),"Error userName",Toast.LENGTH_LONG);
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "Activity Paused");
     }
 
     @Override
-    public void setPasswordError() {
-        Toast.makeText(getApplicationContext(),"Error Passowrd",Toast.LENGTH_LONG);
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "Activity Stopped");
     }
 
     @Override
-    public void navigateToHome() {
-        Toast.makeText(getApplicationContext(),"Welcome", Toast.LENGTH_LONG);
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "Activity Destroyed");
     }
 }

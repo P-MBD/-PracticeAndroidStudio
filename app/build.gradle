@@ -47,7 +47,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'io.realm:realm-android-library:10.11.0'
-
+    implementation 'com.github.satyan:sugar:1.5'
 
 
 }

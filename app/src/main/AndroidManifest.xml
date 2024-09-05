@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name="com.orm.SugarApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,15 +12,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Practice"
+        android:exported="false"
         tools:targetApi="31">
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"> <!-- تغییر داده شده به true -->
+
+        <!-- تنظیمات مربوط به دیتابیس SugarORM -->
+        <meta-data
+            android:name="DATABASE"
+            android:value="sugarorm.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="2" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="com.example.practice.data" />
+
+        <activity android:name=".add.AddActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".main.MainActivity" />
+
     </application>
 
 </manifest>

@@ -5,9 +5,13 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.practice.IGameService;
 import com.example.practice.R;
 import com.example.practice.adapter.ContactAdapter;
 import com.example.practice.data.ContactModel;
+import com.example.practice.service.GameServiceCenter;
+import com.example.practice.service.LauncherService;
 
 import java.util.List;
 
@@ -30,6 +34,19 @@ public class MainActivity extends AppCompatActivity implements MainView {
         mainPresenter = new MainPresenterImpl(this, new MainInteractorImpl());
 
         getContacts(); // دریافت و نمایش لیست مخاطبین
+
+        GameServiceCenter gameServiceCenter = new GameServiceCenter();
+        gameServiceCenter.init(getApplicationContext(), "com.example.practice", new LauncherService() {
+            @Override
+            public void onResult(IGameService gameInterface) {
+                Log.e("","");
+            }
+
+            @Override
+            public void onFail(String ErrorMessage) {
+                Log.e("","");
+            }
+        });
     }
 
     @Override

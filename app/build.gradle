@@ -10,7 +10,9 @@ android {
     }
     buildFeatures {
         dataBinding true
+        aidl true
     }
+
 
     defaultConfig {
         applicationId "com.example.practice"

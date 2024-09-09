@@ -29,7 +29,8 @@
             android:name="DOMAIN_PACKAGE_NAME"
             android:value="com.example.practice.data" />
 
-        <activity android:name=".add.AddActivity"
+        <!-- فعالیت اصلی (لانچر) -->
+        <activity android:name=".main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,8 +38,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".main.MainActivity" />
 
+        <!-- فعالیت اضافی -->
+        <activity android:name=".add.AddActivity" />
+
+        <!-- سرویس -->
         <service android:name=".service.GameService"
             android:exported="true">
             <intent-filter>
@@ -46,7 +50,5 @@
             </intent-filter>
         </service>
 
-
     </application>
-
 </manifest>

@@ -50,6 +50,8 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'io.realm:realm-android-library:10.11.0'
     implementation 'com.github.satyan:sugar:1.5'
-
+    implementation 'org.tensorflow:tensorflow-lite:2.10.0'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.3.1'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.10.0'
 
 }

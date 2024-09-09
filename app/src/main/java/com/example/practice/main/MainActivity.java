@@ -1,75 +1,93 @@
 package com.example.practice.main;
 
+import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.practice.IGameService;
 import com.example.practice.R;
-import com.example.practice.adapter.ContactAdapter;
-import com.example.practice.data.ContactModel;
-import com.example.practice.service.GameServiceCenter;
-import com.example.practice.service.LauncherService;
 
-import java.util.List;
+import org.tensorflow.lite.Interpreter;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
+import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity implements MainView {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private MainPresenter mainPresenter;
-    private RecyclerView recyclerView;
-    private ContactAdapter contactAdapter;
+    private Interpreter tflite;
+    private static final int INPUT_SIZE = 224;
+    private static final int NUM_CLASSES = 1000; // تعداد کلاس‌ها در مدل MobileNetV2
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        Log.d(TAG, "Initializing presenter...");
-        mainPresenter = new MainPresenterImpl(this, new MainInteractorImpl());
-
-        getContacts(); // دریافت و نمایش لیست مخاطبین
-
-        GameServiceCenter gameServiceCenter = new GameServiceCenter();
-        gameServiceCenter.init(getApplicationContext(), "com.example.practice", new LauncherService() {
-            @Override
-            public void onResult(IGameService gameInterface) {
-                Log.e("","");
-            }
-
-            @Override
-            public void onFail(String ErrorMessage) {
-                Log.e("","");
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume called, refreshing contacts...");
-        getContacts(); // به‌روزرسانی لیست مخاطبین هنگام بازگشت به صفحه
-    }
-
-    public void getContacts() {
         try {
-            Log.d(TAG, "Getting contacts from presenter...");
-            List<ContactModel> contactList = mainPresenter.showContacts();
-            setItems(contactList);
-        } catch (Exception e) {
-            Log.e(TAG, "Error getting contacts", e);
+            tflite = new Interpreter(loadModelFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Model loading failed.");
+            return;
         }
+
+        if (tflite == null) {
+            Log.e(TAG, "Failed to initialize TensorFlow Lite model.");
+            return;
+        }
+
+        // بارگذاری و پردازش تصویر
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true);
+        float[] input = convertBitmapToFloatArray(resizedBitmap);
+
+        // اجرای مدل
+        float[] output = new float[NUM_CLASSES];
+        try {
+            tflite.run(input, output);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "Model inference failed.");
+        }
+
+        // پردازش نتایج
+        processOutput(output);
     }
 
-    @Override
-    public void setItems(List<ContactModel> contacts) {
-        Log.d(TAG, "Setting items to RecyclerView with " + contacts.size() + " contacts.");
-        contactAdapter = new ContactAdapter(contacts);
-        recyclerView.setAdapter(contactAdapter);
+    private ByteBuffer loadModelFile() throws IOException {
+        AssetFileDescriptor fileDescriptor = getAssets().openFd("1.tflite");
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        ByteBuffer byteBuffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+        byteBuffer.order(ByteOrder.nativeOrder());
+        return byteBuffer;
+    }
+
+    private float[] convertBitmapToFloatArray(Bitmap bitmap) {
+        int[] intValues = new int[INPUT_SIZE * INPUT_SIZE];
+        bitmap.getPixels(intValues, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE);
+
+        float[] floatValues = new float[INPUT_SIZE * INPUT_SIZE * 3];
+        for (int i = 0; i < intValues.length; ++i) {
+            int val = intValues[i];
+            floatValues[i * 3] = ((val >> 16) & 0xFF) / 255.0f;
+            floatValues[i * 3 + 1] = ((val >> 8) & 0xFF) / 255.0f;
+            floatValues[i * 3 + 2] = (val & 0xFF) / 255.0f;
+        }
+        return floatValues;
+    }
+
+    private void processOutput(float[] output) {
+        // پردازش نتایج خروجی مدل
+        // به عنوان مثال، چاپ نتایج در لاگ
+        Log.d(TAG, "Output: " + Arrays.toString(output));
     }
 }

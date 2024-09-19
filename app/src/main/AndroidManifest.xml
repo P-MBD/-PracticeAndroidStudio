@@ -30,7 +30,7 @@
             android:value="com.example.practice.data" />
 
         <!-- فعالیت اصلی (لانچر) -->
-        <activity android:name=".main.MainActivity"
+        <activity android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,16 +39,9 @@
         </activity>
 
 
-        <!-- فعالیت اضافی -->
-        <activity android:name=".add.AddActivity" />
 
-        <!-- سرویس -->
-        <service android:name=".service.GameService"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.example.practice.IGameService" />
-            </intent-filter>
-        </service>
 
     </application>
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE " />
 </manifest>
